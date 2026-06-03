@@ -1,0 +1,52 @@
+services:
+
+  oracle-db:
+    container_name: rm563045-oracle-db
+    image: gvenzl/oracle-xe:21-slim
+    ports:
+      - "1521:1521"
+    networks:
+      - m5-network
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      ORACLE_DATABASE: ${ORACLE_DATABASE}
+      APP_USER: ${APP_USER}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 3m
+
+  api:
+    container_name: rm563045-m5-storage
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - m5-network
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${APP_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_USER_PASSWORD}
+      SERVER_PORT: 8080
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  m5-network:
+
+volumes:
+  oracle-data:
