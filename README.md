@@ -134,8 +134,11 @@ DELETE /usuarios/{id}
 ## 2. Clonar o Repositório
 
 ```bash
-git clone <url-do-repositorio>
-cd m5-storage
+git clone https://github.com/M5-SOLUTIONS/GS1-DevOps
+```
+
+```bash
+cd GS1-DevOps
 ```
 
 ---
@@ -144,6 +147,9 @@ cd m5-storage
 
 ```bash
 touch .env
+```
+
+```bash
 nano .env
 ```
 
@@ -247,7 +253,7 @@ whoami
 Conecte no Oracle dentro do container:
 
 ```bash
-docker exec -it rm563045-oracle-db sqlplus ${APP_USER}/${APP_USER_PASSWORD}@//localhost:1521/${ORACLE_DATABASE}
+docker exec -it rm563045-oracle-db sqlplus m5user/senha_app@//localhost:1521/m5storage
 ```
 
 Liste as tabelas criadas pelo Spring:
