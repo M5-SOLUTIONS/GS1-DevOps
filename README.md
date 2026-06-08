@@ -174,7 +174,7 @@ git --version
 nano --version
 ```
 
-Se nâo, rode este comando:
+Se não, rode este comando:
 
 ```bash
 sudo dnf install -y tree git nano dnf-plugins-core
