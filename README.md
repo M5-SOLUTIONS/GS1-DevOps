@@ -167,6 +167,21 @@ ssh admlnx@<IP_PUBLICO>
 
 ## 3. Clonar o Repositório
 
+Verificar se o git e o nano foram instalados corretamente.
+
+```bash
+git --version
+nano --version
+```
+
+Se nâo, rode este comando:
+
+```bash
+sudo dnf install -y tree git nano dnf-plugins-core
+```
+
+Após isso:
+
 ```bash
 git clone https://github.com/M5-SOLUTIONS/GS1-DevOps
 ```
