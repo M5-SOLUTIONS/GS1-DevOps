@@ -64,6 +64,7 @@ az vm run-command invoke \
   --resource-group $RESOURCE_GROUP \
   --name $VM_NAME \
   --command-id RunShellScript \
+  --timeout-in-seconds 300 \
   --scripts "
     sudo dnf update -y
     sudo dnf install -y tree git nano dnf-plugins-core
