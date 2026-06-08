@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # ==========================================
 # VARIÁVEIS DE CONFIGURAÇÃO
 # ==========================================
@@ -8,11 +7,10 @@ LOCATION="canadacentral"
 VM_NAME="vm-m5"
 IMAGE="almalinux:almalinux-x86_64:10-gen2:10.1.202605180"
 SIZE="Standard_B2als_v2"
-
 ADMIN_USERNAME="admlnx"
 ADMIN_PASSWORD="Fiap@2tdsvms"
 DISK_SKU="StandardSSD_LRS"
-PORT=22 # Alterado para 22 (SSH), já que a VM é Linux
+PORT=22
 SHUTDOWN_TIME="0230" # 23:30h horário de Brasília (UTC-3)
 
 # ==========================================
@@ -37,24 +35,38 @@ az vm create \
   --public-ip-sku Standard
 
 echo "Abrindo porta $PORT para SSH..."
-az vm open-port --port $PORT --resource-group $RESOURCE_GROUP --name $VM_NAME
+az vm open-port \
+  --port $PORT \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME
 
 echo "Abrindo porta 8080 para o projeto..."
-az vm open-port --port 8080 --resource-group $RESOURCE_GROUP --name $VM_NAME --priority 910
+az vm open-port \
+  --port 8080 \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --priority 910
+
+echo "Abrindo porta 1521 para Oracle..."
+az vm open-port \
+  --port 1521 \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --priority 920
 
 # ==========================================
 # 2. INSTALAÇÃO DE FERRAMENTAS (DENTRO DA VM)
 # ==========================================
 echo "Iniciando a instalação de Ferramentas..."
 
-echo "Instalando tree, git, nano e utilitários..."
+echo "Atualizando sistema e instalando utilitários base..."
 az vm run-command invoke \
   --resource-group $RESOURCE_GROUP \
   --name $VM_NAME \
   --command-id RunShellScript \
   --scripts "
-    sudo yum update -y
-    sudo yum install -y tree git nano yum-utils
+    sudo dnf update -y
+    sudo dnf install -y tree git nano dnf-plugins-core
   "
 
 echo "Instalando Azure CLI..."
@@ -74,8 +86,8 @@ az vm run-command invoke \
   --name $VM_NAME \
   --command-id RunShellScript \
   --scripts "
-    sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-    sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   "
 
 echo "Configurando permissões do Docker..."
@@ -94,7 +106,6 @@ az vm run-command invoke \
 # 3. CAPTURA DO IP E FINALIZAÇÃO
 # ==========================================
 echo "Obtendo IP público da VM..."
-# Correção: Busca o IP diretamente associado à placa de rede da VM criada
 PUBLIC_IP=$(az vm list-ip-addresses \
   --resource-group $RESOURCE_GROUP \
   --name $VM_NAME \
@@ -107,12 +118,18 @@ echo "VM CONFIGURADA COM SUCESSO!"
 echo "============================="
 echo ""
 echo "Softwares instalados:"
-echo "- Git"
-echo "- Nano"
-echo "- Azure CLI"
-echo "- Docker (configurado)"
+echo "  - Git"
+echo "  - Nano"
+echo "  - Tree"
+echo "  - Azure CLI"
+echo "  - Docker + Docker Compose (plugin)"
+echo ""
+echo "Portas abertas:"
+echo "  - 22   (SSH)"
+echo "  - 8080 (API)"
+echo "  - 1521 (Oracle DB)"
 echo ""
 echo "Para conectar via SSH execute:"
-echo "ssh $ADMIN_USERNAME@$PUBLIC_IP"
+echo "  ssh $ADMIN_USERNAME@$PUBLIC_IP"
 echo ""
 echo "Senha: $ADMIN_PASSWORD"
