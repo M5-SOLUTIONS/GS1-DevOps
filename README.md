@@ -124,14 +124,48 @@ DELETE /usuarios/{id}
 
 # How to
 
-## 1. Pré-requisitos
+## 1. Criar a VM na Azure
 
-- Docker e Docker Compose instalados na máquina ou VM
-- Git instalado
+O script `cria-vm.sh` cria e configura toda a infraestrutura na Azure automaticamente.
+Ele provisiona a VM, abre as portas necessárias e instala Git, Docker e Azure CLI dentro da VM.
+
+Execute no Azure CLI:
+
+```bash
+chmod +x cria-vm.sh
+```
+```bash
+sed -i 's/\r$//' cria-vm.sh
+```
+
+```bash
+./cria-vm.sh
+```
+
+Ao final, o script exibe o IP público e o comando SSH:
+
+```
+=============================
+VM CONFIGURADA COM SUCESSO!
+=============================
+
+Para conectar via SSH execute:
+ssh admlnx@<IP_PUBLICO>
+
+Senha: {SENHA QUE ESTA NO cria-vm.sh}
+```
 
 ---
 
-## 2. Clonar o Repositório
+## 2. Acessar a VM via SSH
+
+```bash
+ssh admlnx@<IP_PUBLICO>
+```
+
+---
+
+## 3. Clonar o Repositório
 
 ```bash
 git clone https://github.com/M5-SOLUTIONS/GS1-DevOps
@@ -143,7 +177,7 @@ cd GS1-DevOps
 
 ---
 
-## 3. Configurar o arquivo `.env`
+## 4. Configurar o arquivo `.env`
 
 ```bash
 touch .env
@@ -172,7 +206,7 @@ Salve com `Ctrl+O` e saia com `Ctrl+X`.
 
 ---
 
-## 4. Subir os containers
+## 5. Subir os containers
 
 ```bash
 docker compose up -d --build
@@ -194,7 +228,7 @@ DATABASE IS READY TO USE!
 
 ---
 
-## 5. Ver os logs de ambos os containers
+## 6. Ver os logs de ambos os containers
 
 ```bash
 docker logs rm563045-oracle-db
@@ -203,7 +237,7 @@ docker logs rm563045-m5-storage
 
 ---
 
-## 6. Acessar os containers
+## 7. Acessar os containers
 
 ### Container da API
 
@@ -248,7 +282,7 @@ whoami
 
 ---
 
-## 7. Verificar persistência no banco
+## 8. Verificar persistência no banco
 
 Conecte no Oracle dentro do container:
 
@@ -281,7 +315,7 @@ EXIT;
 
 ---
 
-## 8. Testar a API
+## 9. Testar a API
 
 Acesse o Swagger no navegador:
 
@@ -297,7 +331,7 @@ http://<IP_PUBLICO>:8080/swagger-ui/index.html
 
 ---
 
-## 9. Comandos úteis
+## 10. Comandos úteis
 
 | Ação | Comando                              |
 |---|--------------------------------------|
