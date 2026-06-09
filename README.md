@@ -34,6 +34,16 @@ A plataforma foi criada para facilitar o controle de recursos críticos em ambie
 
 ---
 
+# Desenvolvido por
+
+- Guilherme Cintra RM562850
+- Erick de Faria Gama RM561951
+- Matheus Nascimento Corregio RM563765
+- Pedro Fonseca de Almeida RM563466
+- Daniel Fonseca de Almeida RM563045
+
+---
+
 ## Estrutura Hierárquica do Sistema
 
 ```
